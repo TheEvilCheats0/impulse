@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IMPULSE | Регистрация и Вход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="impulse.css"> <!-- Подключаем существующий CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+  <style>
+    /* Дополнительные стили для страницы авторизации */
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a1a, #222, #2a2a2a);
+      padding: 20px;
+    }
+
+    .auth-container {
+      background: #151515;
+      padding: 40px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 30px rgba(244, 163, 0, 0.2);
+    }
+
+    .auth-container h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #f4a300;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .auth-form input {
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      background: #222;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .auth-form button {
+      background: #f4a300;
+      color: #000;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .auth-form button:hover {
+      background: #fff;
+    }
+
+    .auth-message {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .auth-toggle {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .auth-toggle a {
+      color: #f4a300;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-toggle a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header class="glass-header">
+    <div class="container">
+      <a href="impulse.html" class="logo hologram-text">IMPULSE</a>
+      <nav class="hologram-nav">
+        <a href="impulse.html"><i class="las la-home"></i> Главная</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-page">
+    <!-- Форма регистрации -->
+    <div class="auth-container" id="registerContainer">
+      <h2>Регистрация</h2>
+      <form id="registerForm" class="auth-form">
+        <input type="text" id="regName" placeholder="Имя" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Пароль" required>
+        <button type="submit">Зарегистрироваться</button>
+      </form>
+      <p id="registerMessage" class="auth-message"></p>
+      <div class="auth-toggle">
+        <p>Уже есть аккаунт? <a href="#" id="showLogin">Войти</a></p>
+      </div>
+    </div>
+
+    <!-- Форма входа (скрыта по умолчанию) -->
+    <div class="auth-container" id="loginContainer" style="display: none;">
+      <h2>Вход</h2>
+      <form id="loginForm" class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Пароль" required>
+        <button type="submit">Войти</button>
+      </form>
+      <p id="loginMessage" class="auth-message"></p>
+      <div class="auth-toggle">
+        <p>Нет аккаунта? <a href="#" id="showRegister">Зарегистрироваться</a></p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="neon-footer">
+    <div class="container">
+      <p>© 2025 IMPULSE. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Переключение между формами
+    const registerContainer = document.getElementById('registerContainer');
+    const loginContainer = document.getElementById('loginContainer');
+    const showLogin = document.getElementById('showLogin');
+    const showRegister = document.getElementById('showRegister');
+
+    showLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerContainer.style.display = 'none';
+      loginContainer.style.display = 'block';
+    });
+
+    showRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginContainer.style.display = 'none';
+      registerContainer.style.display = 'block';
+    });
+
+    // Регистрация
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+      const message = document.getElementById('registerMessage');
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+
+      const existingUser = users.find(user => user.email === email);
+      if (existingUser) {
+        message.style.color = '#ff0000';
+        message.textContent = 'Пользователь с таким email уже зарегистрирован';
+        return;
+      }
+
+      const newUser = { name, email, password };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      message.style.color = '#f4a300';
+      message.textContent = 'Регистрация успешна!';
+      document.getElementById('registerForm').reset();
+    });
+
+    // Вход
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const message = document.getElementById('loginMessage');
+
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(user => user.email === email && user.password === password);
+
+      if (user) {
+        message.style.color = '#f4a300';
+        message.textContent = `Добро пожаловать, ${user.name}!`;
+        // Здесь можно добавить редирект на главную страницу, например:
+        // setTimeout(() => window.location.href = 'impulse.html', 1000);
+      } else {
+        message.style.color = '#ff0000';
+        message.textContent = 'Неверный email или пароль';
+      }
+    });
+  </script>
+</body>
+</html>
